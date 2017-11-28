@@ -18,7 +18,8 @@
     "@stencil/core": "next",
     "@stencil/router": "latest",
     "faker": "^4.1.0",
-    "fastify": "^0.35.2"
+    "fastify": "^0.35.2",
+    "fastify-ws": "^0.4.0"
   },
   "devDependencies": {
     "@stencil/dev-server": "latest",

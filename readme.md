@@ -1,21 +1,27 @@
-# Stencil App Starter
+# Wheel of Fate
+
+*Wheel of Fate* is a small demo project, showcasing:
+
+- [StencilJS](https://stenciljs.com/) front-end
+- [Fastify](https://www.fastify.io/) server
+
+## StencilJS
 
 Stencil is a compiler for building fast web apps using Web Components.
 
-Stencil combines the best concepts of the most popular frontend frameworks into a compile-time rather than run-time tool.  Stencil takes TypeScript, JSX, a tiny virtual DOM layer, efficient one-way data binding, an asynchronous rendering pipeline (similar to React Fiber), and lazy-loading out of the box, and generates 100% standards-based Web Components that run in any browser supporting the Custom Elements v1 spec.
-
-Stencil components are just Web Components, so they work in any major framework or with no framework at all. In many cases, Stencil can be used as a drop in replacement for traditional frontend frameworks given the capabilities now available in the browser, though using it as such is certainly not required.
-
-Stencil also enables a number of key capabilities on top of Web Components, in particular Server Side Rendering (SSR) without the need to run a headless browser, pre-rendering, and objects-as-properties (instead of just strings).
+- TypeScript
+- TSX (React JSX for TypeScript)
+- Server Side Rendering (SSR)
+- SASS stylesheets
+- ...
 
 ## Getting Started
 
 To start a new project using Stencil, clone this repo to a new directory:
 
 ```bash
-git clone https://github.com/ionic-team/stencil-starter.git my-app
-cd my-app
-git remote rm origin
+git clone https://github.com/kristianmandrup/wheel-of-fate
+cd wheel-of-fate
 ```
 
 and run:
@@ -49,4 +55,152 @@ To run the unit tests and watch for file changes during development, run:
 
 ```
 npm run test.watch
+```
+
+## Architecture
+
+- Front-end (UI)
+- Back-end
+- Engine
+
+### Front-end (UI)
+
+The UI is designed using native Custom elements (aka. Web components).
+The main components are:
+
+- `fate-wheel` Displays the engineer schedule for a given month (30 days)
+- `day-fate` Displays the fate for 2 engineers on a given day
+- `day-spinner` Button to spin the wheel and generate a new engineer schedule (ie. fate) for that month
+
+The UI currently uses [Bootstrap 4 (beta)](https://v4-alpha.getbootstrap.com/) for styling, mainly:
+
+- `cards`
+- `buttons`
+
+A wheel for given month displays a `card` for each day.
+
+The UI can be found in `/src` folder, the components in `src/components`.
+The `index.html` is the main entry point. It loads Bootstrap in the header via CDN.
+
+```html
+<main class="container-fluid">
+  <h1>Spin the Wheel of Fate</h1>
+  <fate-wheel></fate-wheel>
+</main>
+```
+
+### Back-end (server)
+
+The back-end is written using [Fastify](https://www.fastify.io/), a new super performant lightweight framework built on top of [Express](expressjs.com/)
+
+- Extendible: Fastify is fully extensible via its hooks, plugins and decorators
+- Highly performant: can serve up to 20.000 request per second
+
+The server can be found in `/server` folder
+
+The server currently consists of 2 routes:
+
+- `day/:id` (POST) : create a new `Day` schedule of engineers
+- `month` (POST) : create a new `Month` schedule of engineers
+
+```js
+let $month, $day
+
+// create fate for a single day
+fastify
+  .post('/day/:id', schema.day, function (req, reply) {
+    const id = req.params.id
+    if (id < 0 || id > 30) {
+      return reply.send({
+        error: 'Invalid id'
+      })
+    }
+    $day = $month.days[id]
+    reply
+      .send({ day: $day.asJson })
+  })
+
+// create a new month of fate
+fastify
+  .post('/month', schema.month, function (_, reply) {
+    $month = createMonth()
+    reply
+      .send({ month: $month.asJson })
+  })
+```
+
+### Engine
+
+The engine is designed using [TypeScript](typescriptlang.org), ie. strongly typed Javascript.
+
+The engine can be found in `/src/models` folder and is unit tested via [Jest](https://facebook.github.io/jest/) by Facebook/React.
+
+## Reactivity
+
+We will be using [Web sockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) technology to have the UI be notified and react to changes on the backend.
+
+### Web sockets
+
+We use Web sockets based on the blazing fast [uws](https://www.npmjs.com/package/uws) library via the [fastify-ws](https://github.com/gj/fastify-ws) plugin
+
+On the server we set up a socket to listen to any `message` and send it back.
+
+```js
+fastify.ws
+  .on('connection', socket => {
+    socket.on('message', msg => socket.send(msg)) // Creates an echo server
+  })
+```
+
+In the client we can set up a `WebSocket` connection to the host and send/receive messages:
+
+```js
+    const ws = new WebSocket(host)
+    ws.onmessage = msg => console.log(msg.data)
+    ws.send('WebSockets are awesome!')
+```
+
+### Integrating sockets with REST API
+
+When we receive a POST we can send the new data back via a socket as well:
+
+```js
+// day
+  let pack = { day: $day.asJson }
+  reply
+    .send(pack);
+  fastSocket.send(pack)
+
+// month
+  let pack = { month: $month.asJson }
+  reply
+    .send(pack)
+  fastSocket.send(pack)
+```
+
+Then have the components re-render on any newly received data received on the socket. This simply requires a `@State` decorator on a component property.
+
+```ts
+export class DayFate {
+  componentDidLoad() {
+    const host = location.origin.replace(/^http/, 'ws')
+    // listen to socket for changes and set new month state on any month received
+    const ws = new WebSocket(host)
+
+    // on any message received from server,
+    // check if day message, if so update day state to automatically re-render
+    ws.onmessage = msg => {
+      if (msg['day']) {
+        // update state
+        this.day = msg['day']
+      }
+    }
+  }
+
+  @State() @Prop() day: Day;
+
+  render() {
+    //...
+  }
+}
 ```

@@ -1,4 +1,4 @@
-import { Component, Prop } from '@stencil/core'
+import { Component, Prop, State } from '@stencil/core'
 import { Day } from '../../models'
 
 @Component({
@@ -7,13 +7,18 @@ import { Day } from '../../models'
 })
 export class DayFate {
   componentDidLoad() {
-    console.log('The component has been rendered');
-  }
-  componentDidUnload() {
-    console.log('The component tag has been removed from the DOM');
+    const host = location.origin.replace(/^http/, 'ws')
+    // listen to socket for changes and set new month state on any month received
+    const ws = new WebSocket(host)
+    ws.onmessage = msg => {
+      if (msg['day']) {
+        // update state
+        this.day = msg['day']
+      }
+    }
   }
 
-  @Prop() day: Day;
+  @State() @Prop() day: Day;
   @Prop() index: number;
 
   // https://getbootstrap.com/docs/4.0/components/card/

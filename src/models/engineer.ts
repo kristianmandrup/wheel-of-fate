@@ -38,17 +38,12 @@ export class Engineer {
     function filtered(engineers) {
       return engineers.filter(e => {
         const condition = !Boolean(exludeList.find(ex => ex.name === e.name))
-        // console.log(e, condition)
         return condition
       })
     }
 
     const { engineers } = this
     const selectionPool = exludeList.length > 0 ? filtered(engineers) : this.engineers
-    // console.log({
-    //   exludeList,
-    //   selectionPool
-    // })
     if (selectionPool.length < num) {
       throw new Error(`not enough engineers to select from: ${selectionPool.length} < ${num}`)
     }

@@ -6,9 +6,6 @@
 
 import '@stencil/router';
 
-import {
-  Day,
-} from './models';
 
 import {
   DayFate as DayFate
@@ -35,7 +32,6 @@ declare global {
   namespace JSXElements {
     export interface DayFateAttributes extends HTMLAttributes {
       
-        day?: Day,
         index?: number
     }
   }
