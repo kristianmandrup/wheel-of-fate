@@ -210,6 +210,8 @@ export class DayFate {
 - New day spin
 - New month spin
 
+Using techniques from [StencilJS tutorial video](https://www.youtube.com/watch?v=g4jsOCUD4lA&t=106s)
+
 ### New Day spin
 
 For the `day-fate` component, we can set up an `onClick` event handler with a `data-` attribute on the element with the day index (0-30).
