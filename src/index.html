@@ -29,12 +29,13 @@
   <main class="container-fluid">
     <h1>Spin the Wheel of Fate</h1>
     <fate-wheel></fate-wheel>
+    <day-spinner></day-spinner>
   </main>
   <script>
-    const host = location.origin.replace(/^http/, 'ws')
-    const ws = new WebSocket(host)
-    ws.onmessage = msg => console.log(msg.data)
-    ws.send('WebSockets are awesome!')
+    // const host = location.origin.replace(/^http/, 'ws')
+    // const ws = new WebSocket(host)
+    // ws.onmessage = msg => console.log(msg.data)
+    // ws.send('WebSockets are awesome!')
 
   </script>
 

@@ -204,3 +204,62 @@ export class DayFate {
   }
 }
 ```
+
+## Spin the Wheel
+
+- New day spin
+- New month spin
+
+### New Day spin
+
+For the `day-fate` component, we can set up an `onClick` event handler with a `data-` attribute on the element with the day index (0-30).
+
+```html
+<a data-index={this.index} onClick={this.onClick}
+```
+
+Then the `onClick` handler can make the server request (ie. call API) to generate new Day fate.
+
+```js
+  // make request
+  onClick(e) {
+    console.log(e, 'make server request for a new day date')
+  }
+```
+
+### New Month spin
+
+Fot the Month spin, we add a `day-spinner` component under the `fate-wheel`
+
+```html
+  <main class="container-fluid">
+    <h1>Spin the Wheel of Fate</h1>
+    <fate-wheel></fate-wheel>
+    <day-spinner></day-spinner>
+  </main>
+```
+
+The `day-spinner` component can then be set up to make a Request for a new month (spin) as an `onClick` side effect on the button.
+
+```js
+  // make a post request or send via Web socket
+  onClick() {
+
+  }
+
+  render() {
+    return (
+      <button onClick={this.onClick} name="fate">
+        Spin it
+      </button>
+    )
+  }
+```
+
+### Client websocket posts
+
+We could also add support for clients to post updates to Websockets alongside the REST api.
+
+## License
+
+MIT

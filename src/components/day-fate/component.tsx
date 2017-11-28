@@ -7,21 +7,26 @@ import { Day } from '../../models'
 })
 export class DayFate {
   componentDidLoad() {
-    const host = location.origin.replace(/^http/, 'ws')
-    // listen to socket for changes and set new month state on any month received
-    const ws = new WebSocket(host)
-    ws.onmessage = msg => {
-      if (msg['day']) {
-        // update state
-        this.day = msg['day']
-      }
-    }
+    // const host = location.origin.replace(/^http/, 'ws')
+    // // listen to socket for changes and set new month state on any month received
+    // const ws = new WebSocket(host)
+    // ws.onmessage = msg => {
+    //   if (msg['day']) {
+    //     // update state
+    //     this.day = msg['day']
+    //   }
+    // }
   }
 
   @State() @Prop() day: Day;
   @Prop() index: number;
 
   // https://getbootstrap.com/docs/4.0/components/card/
+
+  // make request
+  onClick(e) {
+    console.log(e, 'make server request for a new day date')
+  }
 
   render() {
     return (
@@ -33,7 +38,7 @@ export class DayFate {
           <button class="engineer btn btn-secondary evening">{this.day.evening.name}</button>
         </div>
         <div class="card-block spinner">
-          <a href="/spin/{this.index}" class="btn btn-primary">Spin it!</a>
+          <a data-index={this.index} onClick={this.onClick} class="btn btn-primary">Spin it!</a>
         </div>
       </div >
     )

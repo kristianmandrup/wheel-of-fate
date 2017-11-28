@@ -12,10 +12,15 @@ export class DaySpinner {
     console.log('The component tag has been removed from the DOM');
   }
 
+  // make a post request or send via Web socket
+  onClick() {
+
+  }
+
   render() {
     return (
-      <button name="fate">
-        Spin
+      <button onClick={this.onClick} name="fate">
+        Spin it
       </button>
     )
   }
