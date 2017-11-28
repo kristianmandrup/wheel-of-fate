@@ -1,0 +1,34 @@
+import { Engineer } from './engineer'
+
+export class Day {
+  morning: Engineer
+  evening: Engineer
+
+  isWorking(engineer: Engineer) {
+    return [this.morning, this.evening].indexOf(engineer) >= 0
+  }
+
+  asJson(index) {
+    return {
+      index,
+      morning: this.morning.asJson,
+      evening: this.evening.asJson
+    }
+  }
+
+  /**
+   *
+   * @param previous
+   * @param force To force engineer selection without taking into consideration a previosu day schedule
+   */
+  fill(previous: Day, force?: boolean): Day {
+    if (!previous && !force) {
+      throw new Error('Must take a previous day schedule to ensure engineers are not overworked')
+    }
+    const exludeList = force ? [] : [previous.morning, previous.evening]
+    const engineers = Engineer.select(2, exludeList)
+    this.morning = engineers[0]
+    this.evening = engineers[1]
+    return this
+  }
+}
