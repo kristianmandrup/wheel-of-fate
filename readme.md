@@ -210,22 +210,25 @@ export class DayFate {
 - New day spin
 - New month spin
 
-Using techniques from [StencilJS tutorial video](https://www.youtube.com/watch?v=g4jsOCUD4lA&t=106s)
+Using techniques from [StencilJS tutorial video](https://www.youtube.com/watch?v=g4jsOCUD4lA)
 
 ### New Day spin
 
 For the `day-fate` component, we can set up an `onClick` event handler with a `data-` attribute on the element with the day index (0-30).
 
 ```html
-<a data-index={this.index} onClick={this.onClick}
+<a data-index={this.index} onClick={this.onClickHandler.bind(this)}
 ```
 
 Then the `onClick` handler can make the server request (ie. call API) to generate new Day fate.
 
 ```js
   // make request
-  onClick(e) {
-    console.log(e, 'make server request for a new day date')
+  onClickHandler(e) {
+    const { target } = e
+    const { index } = target.dataset
+    // TODO: extract index from data attribute of target element of event to req
+    console.log('make server request for a new day date', { e, target, index })
   }
 ```
 
@@ -245,13 +248,61 @@ The `day-spinner` component can then be set up to make a Request for a new month
 
 ```js
   // make a post request or send via Web socket
-  onClick() {
+  onClickHandler() {
 
   }
 
   render() {
     return (
-      <button onClick={this.onClick} name="fate">
+      <button onClick={this.onClickHandler.bind(this)} name="fate">
+        Spin it
+      </button>
+    )
+  }
+```
+
+In real life it would look like this, and ideally use a client Service class to call the Server.
+
+```js
+  // make a post request or send via Web socket
+  onClickHandler() {
+    this.callRest()
+    this.callWs()
+  }
+
+  // send request for new month spin via WS
+  // TODO: use a service
+  callWs() {
+    const host = location.origin.replace(/^http/, 'ws')
+    const ws = new WebSocket(host)
+    const month = {}
+    ws.send({ month })
+  }
+
+  // TODO: use a service
+  callRest() {
+    const post = window['$']['post']
+    const data = {}
+    const onSuccess = this.onSuccess.bind(this)
+    const onFailure = this.onFailure.bind(this)
+    post('/month',
+      data
+    )
+      .done(onSuccess)
+      .fail(onFailure)
+  }
+
+  // TODO: update component state
+  onSuccess(data) {
+  }
+
+  // TODO: display err message
+  onFailure(error) {
+  }
+
+  render() {
+    return (
+      <button onClick={this.onClickHandler.bind(this)} name="fate">
         Spin it
       </button>
     )

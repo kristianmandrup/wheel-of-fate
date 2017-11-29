@@ -24,8 +24,11 @@ export class DayFate {
   // https://getbootstrap.com/docs/4.0/components/card/
 
   // make request
-  onClick(e) {
-    console.log(e, 'make server request for a new day date')
+  onClickHandler(e) {
+    const { target } = e
+    const { index } = target.dataset
+    // TODO: extract index from data attribute of target element of event to req
+    console.log('make server request for a new day date', { e, target, index })
   }
 
   render() {
@@ -38,7 +41,7 @@ export class DayFate {
           <button class="engineer btn btn-secondary evening">{this.day.evening.name}</button>
         </div>
         <div class="card-block spinner">
-          <a data-index={this.index} onClick={this.onClick} class="btn btn-primary">Spin it!</a>
+          <a data-index={this.index} onClick={this.onClickHandler.bind(this)} class="btn btn-primary">Spin it!</a>
         </div>
       </div >
     )
