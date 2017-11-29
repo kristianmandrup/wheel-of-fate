@@ -37,8 +37,8 @@ export class DayFate {
       }>
         <div class="card-block">
           <h4 class="card-title">Day #{this.index}</h4>
-          <button class="engineer btn btn-secondary morning">{this.day.morning.name}</button>
-          <button class="engineer btn btn-secondary evening">{this.day.evening.name}</button>
+          <button class="engineer btn btn-secondary morning">{this.day ? this.day.morning.name : ''}</button>
+          <button class="engineer btn btn-secondary evening">{this.day ? this.day.evening.name : ''}</button>
         </div>
         <div class="card-block spinner">
           <a data-index={this.index} onClick={this.onClickHandler.bind(this)} class="btn btn-primary">Spin it!</a>

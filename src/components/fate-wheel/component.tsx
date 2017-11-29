@@ -25,7 +25,7 @@ export class FateWheel {
     // }
   }
 
-  @State() month: Month
+  @State() @Prop() month: Month
 
   @PropWillChange('month')
   willChangeHandler(newValue: boolean) {
