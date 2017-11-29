@@ -129,6 +129,10 @@ fastify
   })
 ```
 
+### Start server
+
+`$ node server`
+
 ### Engine
 
 The engine is designed using [TypeScript](typescriptlang.org), ie. strongly typed Javascript.

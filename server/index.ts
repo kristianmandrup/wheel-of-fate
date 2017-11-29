@@ -1,4 +1,6 @@
-import Fastify from 'fastify'
+// import Fastify from 'fastify'
+const Fastify = require('fastify')
+
 import {
   day,
   month
