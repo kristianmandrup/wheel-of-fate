@@ -29,9 +29,16 @@ export class FateWheel {
       return
     }
     ws.onmessage = msg => {
-      if (msg['month']) {
+      log('FateWheel: received', {
+        msg
+      })
+      const pack = JSON.parse(msg.data)
+      log('pack', {
+        pack
+      })
+      if (pack.month) {
         // update state
-        this.month = msg['month']
+        this.month = pack.month
       }
     }
 

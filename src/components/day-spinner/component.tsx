@@ -101,9 +101,15 @@ export class DaySpinner {
 
 const Styles = {
   spinner(enable) {
-    return {
-      display: enable ? 'show' : 'none'
+    log('do spinner style', {
+      enable
+    })
+    let style = {
+      // display: enable ? 'show' : 'none'
+      display: 'show'
     }
+    log('spinner style', style)
+    return style
   }
 }
 

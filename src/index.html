@@ -40,6 +40,12 @@
     } = console
     ws.onmessage = msg => log(msg.data)
     ws.onopen = e => {
+      log('WS is open: will setup components')
+      setTimeout(setupComponents, 2000)
+    }
+
+    function setupComponents() {
+      log('setup components with WS API')
       const daySpinners = document.querySelectorAll('day-spinner')
       var event = new CustomEvent('socketReady', {
         detail: {

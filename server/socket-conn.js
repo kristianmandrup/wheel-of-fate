@@ -32,16 +32,25 @@ fastify.ready(() => {
         if (type === 'month') {
           log('received month request')
           log('create and send new month to client')
-          $month = createMonth().fill()
+          $month = createMonth()
+          $month.fill()
           let pack = {
             type: 'month',
             month: $month.asJson
           }
+          json = $month.asJson
           log('month sent', {
             $month,
             pack,
-            json: $month.asJson
+            json
           })
+          const days = json.days
+          const day1 = days[1]
+          log('json', {
+            days,
+            day1
+          })
+
           socket.send(JSON.stringify(pack))
         }
         if (type === 'day') {

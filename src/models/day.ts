@@ -9,7 +9,11 @@ export class Day {
   }
 
   asJson(index) {
-    console.log('day as json', index)
+    console.log('day as json', {
+      index,
+      morning: this.morning,
+      evening: this.evening
+    })
     return {
       index,
       morning: this.morning ? this.morning.asJson : {},
@@ -28,6 +32,12 @@ export class Day {
     }
     const exludeList = force ? [] : [previous.morning, previous.evening]
     const engineers = Engineer.select(2, exludeList)
+    if (!engineers || engineers.length === 0) {
+      throw new Error('No engineers to fill with :(')
+    }
+    console.log('filling with', {
+      engineers
+    })
     this.morning = engineers[0]
     this.evening = engineers[1]
     return this

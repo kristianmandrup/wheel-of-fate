@@ -54,8 +54,9 @@ export class Engineer {
     return a.map(() => {
       const { element, index } = this.random(list)
       const clone = Object.assign({}, element)
+      const engineer = Engineer.fromClone(clone)
       list.splice(index, 1)
-      return clone
+      return engineer
     })
   }
 
@@ -64,6 +65,10 @@ export class Engineer {
   static add(engineer) {
     this.engineers.push(engineer)
     return engineer
+  }
+
+  static fromClone(clone) {
+    return this.create(clone.name)
   }
 
   static create(name: string) {

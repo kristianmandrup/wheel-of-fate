@@ -12,6 +12,7 @@
     "serve": "stencil-dev-server",
     "start": "npm run dev",
     "test": "jest --no-cache",
+    "build:models": "tsc src/models/*.ts --outDir dist/models",
     "test.watch": "jest --watch --no-cache"
   },
   "dependencies": {

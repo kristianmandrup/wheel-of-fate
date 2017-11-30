@@ -1,23 +1,41 @@
-import { Component, Prop, State, PropWillChange, PropDidChange } from '@stencil/core'
+import { Component, Prop, State, PropWillChange, PropDidChange, Listen } from '@stencil/core'
 import { Day } from '../../models'
+
+const { log, error } = console
 
 @Component({
   tag: 'day-fate',
   styleUrl: 'styles/style.scss'
 })
 export class DayFate {
-  componentDidLoad() {
-    // ws.onmessage = msg => {
-    //   if (msg['day']) {
-    //     // update state
-    //     this.day = msg['day']
-    //   }
-    // }
-    // console.log('day-fate', {
-    //   day: this.day,
-    //   index: this.index
-    // })
+  @Listen('socketReady')
+  socketReadyHandler(event: CustomEvent) {
+    log('FateWheel: socket is ready: ', { event });
+    const { ws } = event.detail
+    if (!ws) {
+      error('FateWheel: Missing Web socket conn', {
+        ctx: this
+      })
+      return
+    }
+    ws.onmessage = msg => {
+      log('DayFate: received', {
+        msg
+      })
+      const pack = JSON.parse(msg.data)
+      log('received', {
+        pack
+      })
+      if (pack.day) {
+        // update state
+        this.day = pack.day
+      }
+    }
+
+    this.ws = ws
   }
+
+  @State() ws: any
 
   // @State()
   @Prop() day: Day;
@@ -49,8 +67,8 @@ export class DayFate {
       }>
         <div class="card-block">
           <h4 class="card-title">Day #{this.index}</h4>
-          <button class="engineer btn btn-secondary morning">{this.day ? this.day.morning.name : ''}</button>
-          <button class="engineer btn btn-secondary evening">{this.day ? this.day.evening.name : ''}</button>
+          <button class="engineer btn btn-secondary morning">{display(this.day, 'morning')}</button>
+          <button class="engineer btn btn-secondary evening">{display(this.day, 'evening')}</button>
         </div>
         <div class="card-block spinner">
           <a data-index={this.index} onClick={this.onClickHandler.bind(this)} class="btn btn-primary">Spin it!</a>
@@ -58,6 +76,11 @@ export class DayFate {
       </div >
     )
   }
+}
+
+function display(day, time) {
+  if (!day || !day[time]) return ''
+  return day[time].name
 }
 
 function randomColor() {

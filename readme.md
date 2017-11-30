@@ -57,6 +57,12 @@ To run the unit tests and watch for file changes during development, run:
 npm run test.watch
 ```
 
+To compile `models` for use with server:
+
+```
+npm run build:models
+```
+
 ## Architecture
 
 - Front-end (UI)
