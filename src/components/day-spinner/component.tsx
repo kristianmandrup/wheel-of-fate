@@ -91,11 +91,7 @@ export class DaySpinner {
 
 const Styles = {
   spinner(enable) {
-    log({
-      enable
-    })
     return {
-      // width: '10rem',
       display: enable ? 'show' : 'none'
     }
   }

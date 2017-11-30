@@ -366,6 +366,33 @@ Then for `callWs` we test if `ws` is available to send on
   ws.send({ month })
 ```
 
+### Conditional spinner display
+
+For the Spinner render method, we pass the `enable` state to the styling function
+
+```js
+  render() {
+    return (
+      <button style={Styles.spinner(this.enable)} onClick={this.onClickHandler.bind(this)} name="fate">
+        Spin it
+      </button>
+    )
+  }
+```
+
+Anytime the component state is updated, it will be re-rendered and hence call `Styles.spinner` with the new `enable` state, to `show` or `hide` it.
+
+```js
+const Styles = {
+  spinner(enable) {
+    return {
+      display: enable ? 'show' : 'none'
+    }
+  }
+}
+```
+
+
 ### Client websocket posts
 
 We could also add support for clients to post updates to Websockets alongside the REST api.
