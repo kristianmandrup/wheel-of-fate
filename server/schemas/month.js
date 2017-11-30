@@ -1,14 +1,21 @@
-"use strict";
-exports.__esModule = true;
-exports.month = {
-    schema: {
-        params: {
-            id: {
-                type: 'number'
-            }
-        },
-        body: {
-            type: 'array'
+const month = {
+  schema: {
+    params: {
+      id: {
+        type: 'number'
+      }
+    },
+    body: {
+      type: 'object',
+      properties: {
+        id: {
+          type: 'string'
         }
+      }
     }
-};
+  }
+}
+
+module.exports = {
+  month
+}
