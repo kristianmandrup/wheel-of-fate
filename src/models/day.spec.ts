@@ -24,6 +24,23 @@ describe('Day', () => {
     expect(day.evening.name).toBe('anna')
   })
 
+  it('should jsonify day', () => {
+    const day = new Day()
+    const kris = Engineer.create('kris')
+    const anna = Engineer.create('anna')
+
+    day.morning = kris
+    day.evening = anna
+
+    const json = day.asJson(0)
+
+    log({
+      json
+    })
+
+    expect(json).toBeTruthy()
+  })
+
   it('should fill day with engineers manually', () => {
     Engineer.createInitial(10)
     const day = new Day().fill(null, true)

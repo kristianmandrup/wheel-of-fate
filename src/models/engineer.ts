@@ -7,6 +7,7 @@ export class Engineer {
   }
 
   get asJson() {
+    console.log('engineer as json', this.name)
     return {
       name: this.name
     }

@@ -19,6 +19,7 @@ export class Month {
   }
 
   get asJson() {
+    console.log('month as json')
     return {
       days: this.days.map((day, index) => {
         return day.asJson(index)

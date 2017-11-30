@@ -5,6 +5,8 @@ import {
   createInitial
 } from './random'
 
+const { log } = console
+
 beforeEach(() => {
   Engineer.engineers = []
 })
@@ -17,6 +19,17 @@ describe('Engineer', () => {
   it('should add engineer', () => {
     Engineer.create('kris')
     expect(Engineer.engineers.length).toBe(1)
+  })
+
+  it('should jsonify engineer', () => {
+    const engineer = Engineer.create('kris')
+    const json = engineer.asJson
+
+    log({
+      json
+    })
+
+    expect(json).toBeTruthy()
   })
 
   it('should select 2 random engineers', () => {
@@ -49,7 +62,7 @@ describe('Engineer', () => {
   })
 
   it('should create random engineers', () => {
-    const engineers = createInitial(2)
+    const engineers = createInitial(2, Engineer.create)
     expect(engineers.length).toBe(2)
     expect(typeof engineers[0].name).toBe('string')
   })

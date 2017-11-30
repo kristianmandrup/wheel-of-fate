@@ -16,31 +16,39 @@ export class DaySpinner {
 
   // make a post request or send via Web socket
   onClickHandler() {
-    this.callRest()
+    // this.callRest()
     this.callWs()
   }
 
   @Listen('socketReady')
   socketReadyHandler(event: CustomEvent) {
-    console.log('socket is ready: ', { event });
+    log('DaySpinner: socket is ready: ', { event });
     this.enable = true
     const { ws } = event.detail
     this.ws = ws
+    log('set ws', {
+      ctx: this
+    })
   }
-  @Prop() ws: any
+  @State() ws: any
 
   // send request for new month spin via WS
   // TODO: use a service
   callWs() {
     const { ws } = this
-    const month = {
-      id: 1
-    }
     if (!ws) {
-      error('Missing Web socket conn')
+      error('DaySpinner: Missing Web socket conn', {
+        ctx: this
+      })
       return
     }
-    ws.send({ month })
+    const pack = JSON.stringify({
+      request: 'month'
+    })
+    log('send socket request', {
+      pack
+    })
+    ws.send(pack)
   }
 
   // TODO: use a service
@@ -53,7 +61,7 @@ export class DaySpinner {
 
     const post = $['post']
     const data = {}
-    const onSuccess = this.onSuccess.bind(this)
+    // const onSuccess = this.onSuccess.bind(this)
     const onFailure = this.onFailure.bind(this)
 
     if (!post) {
@@ -64,7 +72,9 @@ export class DaySpinner {
     post('/month',
       data
     )
-      .done(onSuccess)
+      .done((data) => {
+        log('received', data)
+      })
       .fail(onFailure)
   }
 

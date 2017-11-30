@@ -5,22 +5,58 @@ var fastifyWS = require('fastify-ws');
 fastify.register(fastifyWS);
 
 const {
+  createMonth,
+  Engineer
+} = require('../dist/models')
+
+const {
   log
 } = console
+
+Engineer.createInitial(10)
 
 let fastSocket
 fastify.ready(() => {
   log('fastify ready: open socket conn')
   fastify.ws
     .on('connection', socket => {
-      log('connection', {
-        socket
-      })
+      log('connected to socket :)')
       fastSocket = socket
       socket.on('message', (msg) => {
-        log('received msg to echo', msg)
-        socket.send(msg)
-      }) // Creates an echo server
+        let parsed = JSON.parse(msg)
+        let type = parsed.request
+        log('received msg', {
+          parsed,
+          type
+        })
+        if (type === 'month') {
+          log('received month request')
+          log('create and send new month to client')
+          $month = createMonth().fill()
+          let pack = {
+            type: 'month',
+            month: $month.asJson
+          }
+          log('month sent', {
+            $month,
+            pack,
+            json: $month.asJson
+          })
+          socket.send(JSON.stringify(pack))
+        }
+        if (type === 'day') {
+          log('received day request', parsed.day)
+          log('create and send new day to client')
+          const pack = {
+            type: 'day',
+            // todo: generate real day
+            day: {
+              index: 1
+            }
+          }
+          socket.send(JSON.stringify(pack))
+        }
+      })
     })
 })
 

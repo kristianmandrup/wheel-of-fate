@@ -1,5 +1,7 @@
-import { Component, State, Prop, PropWillChange, PropDidChange } from '@stencil/core'
+import { Component, State, Prop, PropWillChange, PropDidChange, Listen } from '@stencil/core'
 import { Engineer, Month, createMonth } from '../../models'
+
+const { log, error } = console
 
 @Component({
   tag: 'fate-wheel',
@@ -11,36 +13,42 @@ export class FateWheel {
     const month = createMonth()
     month.fill()
     this.month = month
-    // console.log('Set month', {
-    //   month
-    // })
+    log('FateWheel: set initial month', {
+      month
+    })
   }
 
-  componentDidLoad() {
-    const host = 'ws://localhost:34567'
-    // listen to socket for changes and set new month state on any month received
-    const ws = new WebSocket(host)
-    console.log({
-      ws
-    })
+  @Listen('socketReady')
+  socketReadyHandler(event: CustomEvent) {
+    log('FateWheel: socket is ready: ', { event });
+    const { ws } = event.detail
+    if (!ws) {
+      error('FateWheel: Missing Web socket conn', {
+        ctx: this
+      })
+      return
+    }
     ws.onmessage = msg => {
       if (msg['month']) {
         // update state
         this.month = msg['month']
       }
     }
+
+    this.ws = ws
   }
+  @State() ws: any
 
   @State() @Prop() month: Month
 
   @PropWillChange('month')
   willChangeHandler(newValue: boolean) {
-    console.log('The new value of month will be: ', newValue);
+    log('The new value of month will be: ', newValue);
   }
 
   @PropDidChange('month')
   didChangeHandler(newValue: boolean) {
-    console.log('The new value of month is now: ', newValue);
+    log('The new value of month is now: ', newValue);
   }
 
   render() {

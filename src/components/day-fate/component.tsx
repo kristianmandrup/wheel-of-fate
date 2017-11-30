@@ -7,9 +7,6 @@ import { Day } from '../../models'
 })
 export class DayFate {
   componentDidLoad() {
-    // const host = location.origin.replace(/^http/, 'ws')
-    // // listen to socket for changes and set new month state on any month received
-    // const ws = new WebSocket(host)
     // ws.onmessage = msg => {
     //   if (msg['day']) {
     //     // update state

@@ -9,10 +9,11 @@ export class Day {
   }
 
   asJson(index) {
+    console.log('day as json', index)
     return {
       index,
-      morning: this.morning.asJson,
-      evening: this.evening.asJson
+      morning: this.morning ? this.morning.asJson : {},
+      evening: this.evening ? this.evening.asJson : {},
     }
   }
 

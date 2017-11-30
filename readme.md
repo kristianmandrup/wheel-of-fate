@@ -330,7 +330,7 @@ We open a connection in `index.html` and then notify each spinner element, via a
     ws.onopen = e => {
       ws.send('WebSockets are awesome!')
       const daySpinners = document.querySelectorAll('day-spinner')
-      var event = new Event('socketReady', {
+      var event = new CustomEvent('socketReady', {
         detail: {
           ws
         }
