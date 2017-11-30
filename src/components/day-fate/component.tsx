@@ -1,4 +1,4 @@
-import { Component, Prop, State } from '@stencil/core'
+import { Component, Prop, State, PropWillChange, PropDidChange } from '@stencil/core'
 import { Day } from '../../models'
 
 @Component({
@@ -16,10 +16,25 @@ export class DayFate {
     //     this.day = msg['day']
     //   }
     // }
+    // console.log('day-fate', {
+    //   day: this.day,
+    //   index: this.index
+    // })
   }
 
-  @State() @Prop() day: Day;
+  // @State()
+  @Prop() day: Day;
   @Prop() index: number;
+
+  @PropWillChange('day')
+  willChangeHandler(newValue: boolean) {
+    console.log('The new value of month will be: ', newValue);
+  }
+
+  @PropDidChange('day')
+  didChangeHandler(newValue: boolean) {
+    console.log('The new value of month is now: ', newValue);
+  }
 
   // https://getbootstrap.com/docs/4.0/components/card/
 

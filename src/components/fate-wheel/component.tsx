@@ -11,6 +11,9 @@ export class FateWheel {
     const month = createMonth()
     month.fill()
     this.month = month
+    // console.log('Set month', {
+    //   month
+    // })
   }
 
   componentDidLoad() {
@@ -41,6 +44,7 @@ export class FateWheel {
     return (
       <section id="wheel fate">
         {this.month.days.map((day, index) => {
+          // console.log({ day })
           return <day-fate day={day} index={index} />
         })}
       </section>
