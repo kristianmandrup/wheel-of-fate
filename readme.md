@@ -279,8 +279,12 @@ In real life it would look like this, and ideally use a client Service class to 
   callWs() {
     const host = location.origin.replace(/^http/, 'ws')
     const ws = new WebSocket(host)
-    const month = {}
-    ws.send({ month })
+    const request = {
+      request: 'month'
+    }
+    // need to stringify JSON to send over web socket
+    const pack = JSON.stringify(request)
+    ws.send(pack)
   }
 
   // TODO: use a service
@@ -328,7 +332,6 @@ We open a connection in `index.html` and then notify each spinner element, via a
     const ws = new WebSocket(host)
     ws.onmessage = msg => console.log(msg.data)
     ws.onopen = e => {
-      ws.send('WebSockets are awesome!')
       const daySpinners = document.querySelectorAll('day-spinner')
       var event = new CustomEvent('socketReady', {
         detail: {
@@ -363,7 +366,7 @@ Then for `callWs` we test if `ws` is available to send on
     error('Missing Web socket conn')
     return
   }
-  ws.send({ month })
+  ws.send(pack)
 ```
 
 ### Conditional spinner display
@@ -392,6 +395,55 @@ const Styles = {
 }
 ```
 
+### REST and socket Server
+
+Can be configured in Fastify as explained [here](https://github.com/fastify/fastify/issues/500)
+
+Another option would be to use a framework such as [FeathersJS](feathersjs.com), [Sails](https://sailsjs.com/) or similar...
+
+Trying to keep it lightweight here!
+
+### Socket Server
+
+We set up a message listener, then detect what time of request is being sent and handle it accordingly and send back the right response for the given request.
+
+```js
+socket.on('message', (msg) => {
+  let parsed = JSON.parse(msg)
+  let type = parsed.request
+  log('received msg', {
+    parsed,
+    type
+  })
+  if (type === 'month') {
+    log('received month request')
+    log('create and send new month to client')
+    $month = createMonth().fill()
+    let pack = {
+      type: 'month',
+      month: $month.asJson
+    }
+    log('month sent', {
+      $month,
+      pack,
+      json: $month.asJson
+    })
+    socket.send(JSON.stringify(pack))
+  }
+  if (type === 'day') {
+    log('received day request', parsed.day)
+    log('create and send new day to client')
+    const pack = {
+      type: 'day',
+      // todo: generate real day
+      day: {
+        index: 1
+      }
+    }
+    socket.send(JSON.stringify(pack))
+  }
+})
+```
 
 ### Client websocket posts
 
