@@ -17,18 +17,18 @@ export class FateWheel {
   }
 
   componentDidLoad() {
-    const host = location.origin.replace(/^http/, 'ws')
+    const host = 'ws://localhost:34567'
     // listen to socket for changes and set new month state on any month received
     const ws = new WebSocket(host)
     console.log({
       ws
     })
-    // ws.onmessage = msg => {
-    //   if (msg['month']) {
-    //     // update state
-    //     this.month = msg['month']
-    //   }
-    // }
+    ws.onmessage = msg => {
+      if (msg['month']) {
+        // update state
+        this.month = msg['month']
+      }
+    }
   }
 
   @State() @Prop() month: Month

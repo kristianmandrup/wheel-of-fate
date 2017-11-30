@@ -313,6 +313,59 @@ In real life it would look like this, and ideally use a client Service class to 
   }
 ```
 
+### Enabling spinner
+
+The spinner should only be enabled (or shown) when socket connection is ready.
+
+For this we use [Native DOM Custom Events](https://www.sitepoint.com/javascript-custom-events/)
+
+Note: See more on Custom Events [here](https://www.sitepoint.com/javascript-custom-events/) and [here](https://davidwalsh.name/customevent)
+
+We open a connection in `index.html` and then notify each spinner element, via a custom event, passing the open `WebSocket` instance in the `event.detail`
+
+```js
+    const host = 'ws://localhost:34567'
+    const ws = new WebSocket(host)
+    ws.onmessage = msg => console.log(msg.data)
+    ws.onopen = e => {
+      ws.send('WebSockets are awesome!')
+      const daySpinners = document.querySelectorAll('day-spinner')
+      var event = new Event('socketReady', {
+        detail: {
+          ws
+        }
+      });
+      daySpinners.forEach(spinner => {
+        spinner.dispatchEvent(event);
+      })
+    }
+```
+
+We then setup a listener for `socketReady` message in the spinner element.
+
+```js
+  @Listen('socketReady')
+  socketReadyHandler(event: CustomEvent) {
+    console.log('socket is ready: ', { event });
+    this.enable = true
+    const { ws } = event.detail
+    this.ws = ws
+  }
+  @Prop() ws: any
+```
+
+Which sets the `ws` property to the one passed in the event.
+
+Then for `callWs` we test if `ws` is available to send on
+
+```js
+  if (!ws) {
+    error('Missing Web socket conn')
+    return
+  }
+  ws.send({ month })
+```
+
 ### Client websocket posts
 
 We could also add support for clients to post updates to Websockets alongside the REST api.

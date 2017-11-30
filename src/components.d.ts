@@ -67,6 +67,7 @@ declare global {
   namespace JSXElements {
     export interface DaySpinnerAttributes extends HTMLAttributes {
       
+        ws?: any
     }
   }
 }

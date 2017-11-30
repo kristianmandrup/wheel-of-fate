@@ -1,4 +1,6 @@
-import { Component, Prop } from '@stencil/core'
+import { Component, State, Prop, Listen } from '@stencil/core'
+
+const { log, error } = console
 
 @Component({
   tag: 'day-spinner',
@@ -6,10 +8,10 @@ import { Component, Prop } from '@stencil/core'
 })
 export class DaySpinner {
   componentDidLoad() {
-    console.log('The component has been rendered');
+    log('The component has been rendered');
   }
   componentDidUnload() {
-    console.log('The component tag has been removed from the DOM');
+    log('The component tag has been removed from the DOM');
   }
 
   // make a post request or send via Web socket
@@ -18,21 +20,47 @@ export class DaySpinner {
     this.callWs()
   }
 
+  @Listen('socketReady')
+  socketReadyHandler(event: CustomEvent) {
+    console.log('socket is ready: ', { event });
+    this.enable = true
+    const { ws } = event.detail
+    this.ws = ws
+  }
+  @Prop() ws: any
+
   // send request for new month spin via WS
   // TODO: use a service
   callWs() {
-    const host = location.origin.replace(/^http/, 'ws')
-    const ws = new WebSocket(host)
-    const month = {}
+    const { ws } = this
+    const month = {
+      id: 1
+    }
+    if (!ws) {
+      error('Missing Web socket conn')
+      return
+    }
     ws.send({ month })
   }
 
   // TODO: use a service
   callRest() {
-    const post = window['$']['post']
+    const $ = window['$']
+    if (!$) {
+      error('Missing $ on global window object')
+      return
+    }
+
+    const post = $['post']
     const data = {}
     const onSuccess = this.onSuccess.bind(this)
     const onFailure = this.onFailure.bind(this)
+
+    if (!post) {
+      error('Missing $.post method for making REST call')
+      return
+    }
+
     post('/month',
       data
     )
@@ -42,17 +70,34 @@ export class DaySpinner {
 
   // TODO: update component state
   onSuccess(data) {
+    log('success', data)
   }
 
   // TODO: display err message
   onFailure(error) {
+    log('error', error)
   }
+
+  @State() enable: true
 
   render() {
     return (
-      <button onClick={this.onClickHandler.bind(this)} name="fate">
+      <button style={Styles.spinner(this.enable)} onClick={this.onClickHandler.bind(this)} name="fate">
         Spin it
       </button>
     )
   }
 }
+
+const Styles = {
+  spinner(enable) {
+    log({
+      enable
+    })
+    return {
+      // width: '10rem',
+      display: enable ? 'show' : 'none'
+    }
+  }
+}
+

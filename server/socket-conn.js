@@ -4,16 +4,23 @@ var fastifyWS = require('fastify-ws');
 // Register websocket support
 fastify.register(fastifyWS);
 
+const {
+  log
+} = console
+
 let fastSocket
 fastify.ready(() => {
-  console.log('fastify ready: open socket conn')
+  log('fastify ready: open socket conn')
   fastify.ws
     .on('connection', socket => {
-      console.log('connection', {
+      log('connection', {
         socket
       })
       fastSocket = socket
-      socket.on('message', msg => socket.send(msg)) // Creates an echo server
+      socket.on('message', (msg) => {
+        log('received msg to echo', msg)
+        socket.send(msg)
+      }) // Creates an echo server
     })
 })
 
